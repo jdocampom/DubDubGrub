@@ -23,6 +23,10 @@ final class LocationDetailViewModel: ObservableObject {
     var location                         : DDGLocation
     var selectedProfile                  : DDGProfile?
     
+    var buttonColor: Color { isCheckedIn ? .grubRed : .brandPrimary }
+    var buttonLabel: String { isCheckedIn ? "person.fill.xmark" : "person.fill.checkmark" }
+    var accesibilityLabel: String { isCheckedIn ? "Check out" : "Check in" }
+    
     init(location: DDGLocation) { self.location = location }
     
     func determineColumns(for sizeCategory: ContentSizeCategory) -> [GridItem] {
@@ -148,11 +152,11 @@ final class LocationDetailViewModel: ObservableObject {
     func createVoiceOverSummary() -> String {
         let count = checkedInProfiles.count
         if count == 1 {
-            return "Who's here? 1 person checked in"
+            return "Who's here? 1 person checked in."
         } else if count > 1 {
-            return "Who's here? \(count) people checked in"
+            return "Who's here? \(count) people checked in."
         } else {
-            return "Who's here? Nobody's checked in"
+            return "Who's here? Nobody's checked in yet."
         }
     }
     
