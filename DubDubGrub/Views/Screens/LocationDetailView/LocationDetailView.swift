@@ -11,6 +11,8 @@ import UIKit
 struct LocationDetailView: View {
     
     @ObservedObject var viewModel: LocationDetailViewModel
+    @Environment(\.sizeCategory) private var sizeCategory
+    
     
     var body: some View {
         ScrollView{
@@ -86,7 +88,7 @@ struct LocationDetailView: View {
                             Spacer()
                         } else {
                             ScrollView {
-                                LazyVGrid(columns: viewModel.columns, content: {
+                                LazyVGrid(columns: viewModel.determineColumns(for: sizeCategory), content: {
                                     ForEach(viewModel.checkedInProfiles) { profile in
                                         FirstNameAvatarView(profile: profile)
                                             .accessibilityElement(children: .ignore)
@@ -94,7 +96,7 @@ struct LocationDetailView: View {
                                             .accessibilityHint(Text("Show's \(profile.firstName) profile pop-up"))
                                             .accessibilityLabel(Text("\(profile.firstName) \(profile.lastName)"))
                                             .onTapGesture {
-                                                viewModel.selectedProfile = profile
+                                                viewModel.show(profile: profile, in: sizeCategory)
                                             }
                                     }
                                 })
@@ -130,6 +132,19 @@ struct LocationDetailView: View {
             viewModel.getChechedInProfiles()
             viewModel.getCheckedInStatus()
         }
+        .sheet(isPresented: $viewModel.isShowingProfileSheet) {
+            NavigationView {
+                ProfileSheetView(profile: viewModel.selectedProfile!)
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Dismiss") {
+                        viewModel.isShowingProfileSheet = false
+                    }
+                }
+            }
+            .accentColor(.brandPrimary)
+        }
         .alert(item: $viewModel.alertItem, content: { alertItem in
             Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
         })
@@ -142,6 +157,23 @@ struct LocationDetailViewPreviews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.location)))
+                .environment(\.sizeCategory, .extraSmall)
+                .preferredColorScheme(.dark)
+        }
+        NavigationView {
+            LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.location)))
+                .environment(\.sizeCategory, .medium)
+                .preferredColorScheme(.light)
+        }
+        NavigationView {
+            LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.location)))
+                .environment(\.sizeCategory, .extraExtraExtraLarge)
+                .preferredColorScheme(.light)
+        }
+        NavigationView {
+            LocationDetailView(viewModel: LocationDetailViewModel(location: DDGLocation(record: MockData.location)))
+                .environment(\.sizeCategory, .accessibilityExtraExtraExtraLarge)
+                .preferredColorScheme(.dark)
         }
     }
 }
@@ -164,10 +196,11 @@ struct LocationActionButton: View {
 }
 
 struct FirstNameAvatarView: View {
+    @Environment(\.sizeCategory) private var sizeCategory
     var profile: DDGProfile
     var body: some View {
         VStack {
-            AvatarView(image: profile.createAvatarImage(), size: 64)
+            AvatarView(image: profile.createAvatarImage(), size: sizeCategory >= .accessibilityMedium ? 128: 64)
             Text(profile.firstName)
                 .lineLimit(1)
                 .minimumScaleFactor(0.75)
@@ -199,9 +232,8 @@ struct DescriptionView: View {
     var text: String
     var body: some View {
         Text(text)
-            .frame(height: 70)
-            .lineLimit(3)
             .minimumScaleFactor(0.75)
+            .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal)
     }
 }

@@ -8,6 +8,7 @@
 import CloudKit
 import Foundation
 import MapKit
+import SwiftUI
 
 final class LocationMapViewModel: NSObject, ObservableObject {
     
@@ -53,6 +54,14 @@ final class LocationMapViewModel: NSObject, ObservableObject {
             return "\(location.name) \(count) people checked in"
         } else {
             return "\(location.name) Nobody's checked in"
+        }
+    }
+    
+    @ViewBuilder func createLocationDetailView(for location: DDGLocation, in sizeCategory: ContentSizeCategory) -> some View {
+        if sizeCategory >= .accessibilityMedium {
+            LocationDetailView(viewModel: LocationDetailViewModel(location: location)).embedInScrollView()
+        } else {
+            LocationDetailView(viewModel: LocationDetailViewModel(location: location))
         }
     }
     

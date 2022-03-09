@@ -12,6 +12,7 @@ struct LocationMapView: View {
     
     @EnvironmentObject private var locationManager: LocationManager
     @StateObject private var viewModel = LocationMapViewModel()
+    @Environment(\.sizeCategory) private var sizeCategory
     
     var body: some View {
         ZStack {
@@ -32,22 +33,22 @@ struct LocationMapView: View {
             VStack(alignment: .center) {
                 LogoView(frameWidth: UIScreen.screenHeight / 8)
                     .shadow(radius: 7.5)
-//                    .accessibilityHidden(true)
+                //                    .accessibilityHidden(true)
                 Spacer()
             }
         }
         .sheet(isPresented: $viewModel.isShowingDetailView) {
             NavigationView {
-                if let location = locationManager.selectedLocation {
-                    LocationDetailView(viewModel: LocationDetailViewModel(location: location))
-                        .toolbar {
-                            Button("Dismiss") {
-                                viewModel.isShowingDetailView = false
-                                viewModel.getCheckedInCount()
-                            }
+                viewModel.createLocationDetailView(for: locationManager.selectedLocation!, in: sizeCategory)
+                    .toolbar {
+                        Button("Dismiss") {
+                            viewModel.isShowingDetailView = false
+                            viewModel.getCheckedInCount()
                         }
-                        .accentColor(.brandPrimary)
-                }
+                        
+                        
+                    }
+                    .accentColor(.brandPrimary)
             }
         }
         .alert(item: $viewModel.alertItem, content: { alertItem in
