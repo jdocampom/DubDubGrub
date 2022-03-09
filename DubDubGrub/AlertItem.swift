@@ -14,6 +14,10 @@ struct AlertItem: Identifiable {
     let message         : Text
     let dismissButton   : Alert.Button
     
+    var alert: Alert {
+        Alert(title: title, message: message, dismissButton: dismissButton)
+    }
+    
 }
 
 struct AlertContext {
@@ -21,6 +25,10 @@ struct AlertContext {
     /// Tag: MapView Errors
     static let unableToGetLocations         = AlertItem(title: Text("Error"),
                                                         message: Text("Unable to retrieve locations at this time. \n\nPlease try again."),
+                                                        dismissButton: .default(Text("Dismiss")))
+    /// Tag: MapView Errors
+    static let unableToGetCheckedInCount    = AlertItem(title: Text("Error"),
+                                                        message: Text("Unable to retrieve the users checked in count for the map pins at this time. \n\nPlease try again."),
                                                         dismissButton: .default(Text("Dismiss")))
     
     /// Tag: CoreLocation Errors
@@ -72,6 +80,11 @@ struct AlertContext {
                                                         dismissButton: .default(Text("Dismiss")))
     static let unableToGetCheckedInProfiles = AlertItem(title: Text("Server Error"),
                                                         message: Text("We were unable to get the list of checked-in users for this location. \n\nPlease try again later."),
+                                                        dismissButton: .default(Text("Dismiss")))
+    
+    /// Tag: LocationListView Errors
+    static let unableToGetAllCheckedInProfiles = AlertItem(title: Text("Network Error"),
+                                                        message: Text("There was a connectivity error while trying to fetch the list of checked in users for all locations. \n\nPlease try again later. If this error persists contact support for help."),
                                                         dismissButton: .default(Text("Dismiss")))
     
 }

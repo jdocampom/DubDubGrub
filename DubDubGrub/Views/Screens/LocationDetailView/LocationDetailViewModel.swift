@@ -67,6 +67,7 @@ final class LocationDetailViewModel: ObservableObject {
                         debugPrint(message: "⚠️ isCheckedIn == false - REFERENCE  to \(location.name) IS nil ⚠️")
                     }
                 case .failure(_):
+                    HapticManager.playErrorHaptic()
                     alertItem = AlertContext.unableToGetCheckInStatus
                     debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
                 }
@@ -80,6 +81,7 @@ final class LocationDetailViewModel: ObservableObject {
             alertItem = AlertContext.fetchingProfileError
             return
         }
+        showLoadingView()
         CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
             switch result {
             case .success(let record):
@@ -95,8 +97,10 @@ final class LocationDetailViewModel: ObservableObject {
                 }
                 CloudKitManager.shared.save(record: record) { [self] result in
                     DispatchQueue.main.async { [self] in
+                        hideLoadingView()
                         switch result {
                         case .success(_):
+                            HapticManager.playSuccessHaptic()
                             let profile = DDGProfile(record: record)
                             switch ckeckInStatus {
                             case .checkedIn:
@@ -106,14 +110,17 @@ final class LocationDetailViewModel: ObservableObject {
                                 checkedInProfiles.removeAll { $0.id == profile.id }
                                 debugPrint(message: "✅ RECORD SAVED SUCCESSFULLY -- CHECK OUT OF \(location.name) ✅")
                             }
-                            isCheckedIn = ckeckInStatus == .checkedIn
+                            isCheckedIn.toggle()
                         case .failure(_):
+                            HapticManager.playErrorHaptic()
                             alertItem = AlertContext.unableToCheckInOrOut
                             debugPrint(message: "❌ ERROR SAVING RECORD ❌")
                         }
                     }
                 }
             case .failure(_):
+                hideLoadingView()
+                HapticManager.playErrorHaptic()
                 alertItem = AlertContext.unableToCheckInOrOut
                 debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
             }
@@ -128,6 +135,7 @@ final class LocationDetailViewModel: ObservableObject {
                 case .success(let profiles):
                     checkedInProfiles = profiles
                 case .failure(_):
+                    HapticManager.playErrorHaptic()
                     alertItem = AlertContext.unableToGetCheckedInProfiles
                     debugPrint(message: "❌ ERROR FETCHING CHECKED IN PROFILES ❌")
                 }
@@ -148,7 +156,7 @@ final class LocationDetailViewModel: ObservableObject {
         }
     }
     
-    func show(profile: DDGProfile, in sizeCategory: ContentSizeCategory) {
+    func show(_ profile: DDGProfile, in sizeCategory: ContentSizeCategory) {
         selectedProfile = profile
         if sizeCategory >= .accessibilityMedium {
             isShowingProfileSheet = true

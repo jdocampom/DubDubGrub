@@ -14,6 +14,7 @@
 		86108D2E27CEA38D001E9A54 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86108D2D27CEA38D001E9A54 /* Assets.xcassets */; };
 		86108D3127CEA38D001E9A54 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 86108D3027CEA38D001E9A54 /* Preview Assets.xcassets */; };
 		861502D027D9077300364550 /* ProfileSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861502CF27D9077300364550 /* ProfileSheetView.swift */; };
+		861502D227D9273D00364550 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 861502D127D9273D00364550 /* HapticsManager.swift */; };
 		8627DB9927CEB73500756131 /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8627DB9827CEB73500756131 /* CloudKit.framework */; };
 		8627DB9D27CEBAB500756131 /* AppTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8627DB9C27CEBAB500756131 /* AppTabView.swift */; };
 		8627DB9F27CEBAF000756131 /* LocationMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8627DB9E27CEBAF000756131 /* LocationMapView.swift */; };
@@ -57,6 +58,7 @@
 		86108D2D27CEA38D001E9A54 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		86108D3027CEA38D001E9A54 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		861502CF27D9077300364550 /* ProfileSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSheetView.swift; sourceTree = "<group>"; };
+		861502D127D9273D00364550 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 		8627DB9627CEB72B00756131 /* DubDubGrub.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DubDubGrub.entitlements; sourceTree = "<group>"; };
 		8627DB9827CEB73500756131 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		8627DB9C27CEBAB500756131 /* AppTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabView.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 			children = (
 				86B3BA2527D2589A0070E131 /* CloudKitManager.swift */,
 				86B3BA3227D270810070E131 /* LocationManager.swift */,
+				861502D127D9273D00364550 /* HapticsManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -385,6 +388,7 @@
 				866D467127D42F9A00630F95 /* ProfileViewModel.swift in Sources */,
 				86B3BA2D27D25F390070E131 /* AlertItem.swift in Sources */,
 				868D1C8127D170AE0078B8D0 /* AvatarView.swift in Sources */,
+				861502D227D9273D00364550 /* HapticsManager.swift in Sources */,
 				86B3BA3527D277CF0070E131 /* CKAsset+Extension.swift in Sources */,
 				867EF8DE27D7BAAC00DF95A8 /* AppTabViewModel.swift in Sources */,
 				86B3BA3027D264180070E131 /* LocationMapViewModel.swift in Sources */,

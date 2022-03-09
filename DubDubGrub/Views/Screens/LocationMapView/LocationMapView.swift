@@ -15,7 +15,10 @@ struct LocationMapView: View {
     @Environment(\.sizeCategory) private var sizeCategory
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .top) {
+            
+    /// Tag: MapView that displays restaurants locations with their respective annotation.
+            
             Map(coordinateRegion: $viewModel.region, showsUserLocation: true, annotationItems: locationManager.locations) { location in
                 MapAnnotation(coordinate: location.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 0.75)) {
                     DDGAnnotation(location: location, number: viewModel.checkedInProfiles[location.id, default: 0])
@@ -30,12 +33,10 @@ struct LocationMapView: View {
             .accentColor(.grubRed)
             .edgesIgnoringSafeArea([.top, .trailing, .leading])
             
-            VStack(alignment: .center) {
-                LogoView(frameWidth: UIScreen.screenHeight / 8)
-                    .shadow(radius: 7.5)
-                //                    .accessibilityHidden(true)
-                Spacer()
-            }
+    /// Tag: DDG Logo that is placed at the top middle part of the screen.
+            
+            LogoView(frameWidth: UIScreen.width * 1/3).shadow(radius: 7.5)
+            
         }
         .sheet(isPresented: $viewModel.isShowingDetailView) {
             NavigationView {
@@ -45,15 +46,11 @@ struct LocationMapView: View {
                             viewModel.isShowingDetailView = false
                             viewModel.getCheckedInCount()
                         }
-                        
-                        
                     }
                     .accentColor(.brandPrimary)
             }
         }
-        .alert(item: $viewModel.alertItem, content: { alertItem in
-            Alert(title: alertItem.title, message: alertItem.message, dismissButton: alertItem.dismissButton)
-        })
+        .alert(item: $viewModel.alertItem, content: { $0.alert })
         .onAppear {
             if locationManager.locations.isEmpty { viewModel.getLocations(for: locationManager) }
             viewModel.getCheckedInCount()
@@ -64,6 +61,6 @@ struct LocationMapView: View {
 
 struct LocationMapView_Previews: PreviewProvider {
     static var previews: some View {
-        LocationMapView()
+        LocationMapView().environmentObject(LocationManager())
     }
 }

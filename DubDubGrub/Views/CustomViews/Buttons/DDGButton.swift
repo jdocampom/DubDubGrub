@@ -14,7 +14,7 @@ struct DDGButton: View {
         Text(title)
             .bold()
             .font(.title3)
-            .frame(width: UIScreen.screenWidth - 32, height: 52)
+            .frame(width: UIScreen.width - 32, height: 52)
             .foregroundColor(.white)
             .background(Color.brandPrimary)
             .clipShape(Capsule())

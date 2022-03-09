@@ -18,7 +18,7 @@ struct ProfileSheetView: View {
             
             VStack {
                 
-                Image(uiImage: profile.createAvatarImage())
+                Image(uiImage: profile.avatarImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 110, height: 110)

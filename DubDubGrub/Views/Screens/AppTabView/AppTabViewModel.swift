@@ -6,59 +6,65 @@
 //
 
 import CoreLocation
+import SwiftUI
 
-final class AppTabViewModel: NSObject, ObservableObject {
+extension AppTabView {
     
-    @Published var isShowingOnboardingView = false
-    @Published var alertItem               : AlertItem?
-    
-    let kHasSeenOnboardView     = "hasSeenOnboardView"
-    
-    var deviceLocationManager   : CLLocationManager?
-    var hasSeenOnboardView      : Bool { return UserDefaults.standard.bool(forKey: kHasSeenOnboardView) }
-    
-    
-    func runStartupChecks() {
-        if !hasSeenOnboardView {
-            isShowingOnboardingView = true
-            UserDefaults.standard.set(true, forKey: kHasSeenOnboardView)
-        } else {
-            ckeckIfLocationServicesIsEnabled()
+    final class AppTabViewModel: NSObject, ObservableObject, CLLocationManagerDelegate {
+        
+        @Published var isShowingOnboardingView = false
+        @Published var alertItem               : AlertItem?
+        @AppStorage("hasSeenOnboardView") var hasSeenOnboardView = false {
+            didSet {
+                isShowingOnboardingView = hasSeenOnboardView
+            }
         }
-    }
-    
-    
-    func ckeckIfLocationServicesIsEnabled() {
-        if CLLocationManager.locationServicesEnabled() {
-            deviceLocationManager            = CLLocationManager()
-            deviceLocationManager!.delegate  = self
-        } else {
-            // Show Alert
-            alertItem = AlertContext.locationDisabled
+        
+        
+        var deviceLocationManager   : CLLocationManager?
+        
+        
+        func runStartupChecks() {
+            if !hasSeenOnboardView {
+                hasSeenOnboardView = true
+            } else {
+                ckeckIfLocationServicesIsEnabled()
+            }
         }
-    }
-    
-    
-    private func checkLocationAuthorisation() {
-        guard let deviceLocationManager = deviceLocationManager else { return }
-        switch deviceLocationManager.authorizationStatus {
-        case .notDetermined:
-            deviceLocationManager.requestWhenInUseAuthorization()
-        case .restricted:
-            alertItem = AlertContext.locationRestricted
-        case .denied:
-            alertItem = AlertContext.locationDenied
-        case .authorizedAlways, .authorizedWhenInUse:
-            break
-        @unknown default:
-            break
+        
+        
+        func ckeckIfLocationServicesIsEnabled() {
+            if CLLocationManager.locationServicesEnabled() {
+                deviceLocationManager            = CLLocationManager()
+                deviceLocationManager!.delegate  = self
+            } else {
+                HapticManager.playErrorHaptic()
+                alertItem = AlertContext.locationDisabled
+            }
         }
+        
+        func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+            checkLocationAuthorisation()
+        }
+        
+        private func checkLocationAuthorisation() {
+            guard let deviceLocationManager = deviceLocationManager else { return }
+            switch deviceLocationManager.authorizationStatus {
+            case .notDetermined:
+                deviceLocationManager.requestWhenInUseAuthorization()
+            case .restricted:
+                HapticManager.playErrorHaptic()
+                alertItem = AlertContext.locationRestricted
+            case .denied:
+                HapticManager.playErrorHaptic()
+                alertItem = AlertContext.locationDenied
+            case .authorizedAlways, .authorizedWhenInUse:
+                break
+            @unknown default:
+                break
+            }
+        }
+        
     }
     
-}
-
-extension AppTabViewModel: CLLocationManagerDelegate {
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        checkLocationAuthorisation()
-    }
 }

@@ -9,12 +9,12 @@ import SwiftUI
 
 struct OnboardView: View {
     
-    @Binding var isShowingOnboardView: Bool
+    @Environment(\.presentationMode) var presentationMode
     
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
-            LogoView(frameWidth: UIScreen.screenWidth / 1.5)
+            LogoView(frameWidth: UIScreen.width / 1.5)
                 .padding(.vertical)
             Spacer()
             VStack(alignment: .leading, spacing: 20) {
@@ -23,7 +23,7 @@ struct OnboardView: View {
                 OnboardInfoView(imageName: "person.2.circle", title: "Find Friends", description: "See where other iOS Devs are and join thr party.")
                 Spacer()
                 Button {
-                    isShowingOnboardView = false
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
                     DDGButton(title: "Continue")
                 }
@@ -37,11 +37,11 @@ struct OnboardView: View {
 
 struct OnboardView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardView(isShowingOnboardView: .constant(true))
+        OnboardView()
     }
 }
 
-struct OnboardInfoView: View {
+fileprivate struct OnboardInfoView: View {
     
     var imageName: String
     var title: String
