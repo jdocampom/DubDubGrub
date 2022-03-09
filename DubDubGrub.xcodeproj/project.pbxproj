@@ -37,7 +37,6 @@
 		868D1C9327D1AE680078B8D0 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 868D1C9227D1AE680078B8D0 /* MockData.swift */; };
 		86B3BA2627D2589A0070E131 /* CloudKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA2527D2589A0070E131 /* CloudKitManager.swift */; };
 		86B3BA2927D259C60070E131 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA2827D259C60070E131 /* Constants.swift */; };
-		86B3BA2B27D25DB50070E131 /* CKRecord+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA2A27D25DB50070E131 /* CKRecord+Extension.swift */; };
 		86B3BA2D27D25F390070E131 /* AlertItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA2C27D25F390070E131 /* AlertItem.swift */; };
 		86B3BA3027D264180070E131 /* LocationMapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA2F27D264180070E131 /* LocationMapViewModel.swift */; };
 		86B3BA3327D270810070E131 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B3BA3227D270810070E131 /* LocationManager.swift */; };
@@ -82,7 +81,6 @@
 		868D1C9227D1AE680078B8D0 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		86B3BA2527D2589A0070E131 /* CloudKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitManager.swift; sourceTree = "<group>"; };
 		86B3BA2827D259C60070E131 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
-		86B3BA2A27D25DB50070E131 /* CKRecord+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CKRecord+Extension.swift"; sourceTree = "<group>"; };
 		86B3BA2C27D25F390070E131 /* AlertItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertItem.swift; sourceTree = "<group>"; };
 		86B3BA2F27D264180070E131 /* LocationMapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMapViewModel.swift; sourceTree = "<group>"; };
 		86B3BA3227D270810070E131 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -211,7 +209,6 @@
 			isa = PBXGroup;
 			children = (
 				86B3BA3427D277CF0070E131 /* CKAsset+Extension.swift */,
-				86B3BA2A27D25DB50070E131 /* CKRecord+Extension.swift */,
 				86EB659327CEC8ED00B544BE /* Color+Extension.swift */,
 				860698CE27D3D5A1007FE21F /* UIImage+Extension.swift */,
 				8627DBA427CEC37700756131 /* UIScreen+Extension.swift */,
@@ -413,7 +410,6 @@
 				868D1C8527D173520078B8D0 /* View+Extension.swift in Sources */,
 				866D467327D4448200630F95 /* LoadingView.swift in Sources */,
 				86EB659427CEC8ED00B544BE /* Color+Extension.swift in Sources */,
-				86B3BA2B27D25DB50070E131 /* CKRecord+Extension.swift in Sources */,
 				86B3BA2927D259C60070E131 /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

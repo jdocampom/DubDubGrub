@@ -8,74 +8,77 @@
 import SwiftUI
 import CloudKit
 
-/// MARK: - Main SwiftUI View
-
 struct ProfileView: View {
     
     @StateObject private var viewModel = ProfileViewModel()
     
     var body: some View {
-        ScrollView {
-            ZStack {
-                VStack {
-                    HStack(spacing: 16) {
-                        ZStack {
-                            AvatarView(image: viewModel.avatar, size: 84)
-                            EditImage()
-                        }
-                        .accessibilityElement(children: .ignore)
-                        .accessibilityAddTraits(.isButton)
-                        .accessibilityLabel(Text("Profile Photo"))
-                        .accessibilityHint(Text("Tap twice to open the default photo picker to select a new profile picture."))
+        ZStack {
+            VStack {
+                HStack(spacing: 16) {
+                    ProfileImageView(image: viewModel.avatar)
                         .onTapGesture { viewModel.isShowingPhotoPicker = true }
-                        
-                        ProfileUserDataView(firstName: $viewModel.firstName, lastName: $viewModel.lastName, companyName: $viewModel.company)
-                        
+                    VStack(spacing: 1) {
+                        TextField("First Name", text: $viewModel.firstName).profileNameStyle()
+                        TextField("Last Name", text: $viewModel.lastName).profileNameStyle()
+                        TextField("Company Name", text: $viewModel.companyName)
                     }
-                    .padding()
-                    .frame(width: UIScreen.width - 32, height: 84 + 48)
-                    .background(Color(.secondarySystemBackground))
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            CharactersRemainView(currentCount: viewModel.bio.count)
-                                .accessibilityAddTraits(.isHeader)
-                            Spacer()
-                            if viewModel.isCheckedIn {
-                                Button(action: viewModel.checkOut) { CheckOutButton() }
-                                
-                            }
-                        }
-                        BioTextEditor(text: $viewModel.bio)
-                    }
-                    .padding(.horizontal, 20)
-                    Spacer()
-                    Button {
-                        viewModel.profileContext == .create ? viewModel.createProfile() : viewModel.updateProfile()
-                        dismissKeyboard()
-                    } label: {
-                        DDGButton(title: viewModel.profileContext == .create ? "Create Profile" : "Update Profile")
-                    }
-                    .padding(.vertical)
+                    .padding(.trailing, 16)
                 }
+                .padding(.vertical)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(12)
+                .padding(.horizontal)
                 
-                if viewModel.isLoading { LoadingView() }
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        CharactersRemainView(currentCount: viewModel.bio.count)
+                            .accessibilityAddTraits(.isHeader)
+                        Spacer()
+                        
+                        if viewModel.isCheckedIn {
+                            Button(action: viewModel.checkOut) {
+                                CheckOutButton()
+                            }
+                            .disabled(viewModel.isLoading)
+                        }
+                    }
+                    
+                    BioTextEditor(text: $viewModel.bio)
+                }
+                .padding(.horizontal, 20)
+                
+                Spacer()
+                
+                Button(action: viewModel.determineButtonAction) {
+                    DDGButton(title: viewModel.buttonTitle)
+                }
+                .padding(.bottom)
             }
+            
+            if viewModel.isLoading { LoadingView() }
         }
         .navigationTitle("Profile")
         .navigationBarTitleDisplayMode(DeviceTypes.isiPhone8Standard ? .inline : .automatic)
-        .toolbar { Button(action: dismissKeyboard) { DismissKeyboardButtonLabel() } }
-        .onAppear { viewModel.runOnAppearChecks() }
+        .toolbar {
+            Button {
+                dismissKeyboard()
+            } label: {
+                Image(systemName: "keyboard.chevron.compact.down")
+            }
+        }
+        .onAppear {
+            viewModel.getProfile()
+            viewModel.getCheckedInStatus()
+        }
         .alert(item: $viewModel.alertItem, content: { $0.alert })
         .sheet(isPresented: $viewModel.isShowingPhotoPicker) { PhotoPicker(image: $viewModel.avatar) }
     }
-    
 }
 
-/// MARK: - SwiftUI Previews
+/// MARK: -  SwiftUI Previews
 
-fileprivate struct ProfileView_Previews: PreviewProvider {
+struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ProfileView()
@@ -94,16 +97,27 @@ fileprivate struct NameBackgroundView: View {
     }
 }
 
-fileprivate struct EditImage: View {
+fileprivate struct ProfileImageView: View {
+    var image: UIImage
     var body: some View {
-        Image(systemName: "square.and.pencil")
-            .resizable()
-            .scaledToFit()
-            .frame(width: 14, height: 14)
-            .foregroundColor(.white)
-            .offset(y: 30)
+        ZStack {
+            AvatarView(image: image, size: 84)
+            
+            Image(systemName: "square.and.pencil")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 14, height: 14)
+                .foregroundColor(.white)
+                .offset(y: 30)
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityLabel(Text("Profile Photo"))
+        .accessibilityHint(Text("Opens the iPhone's photo picker"))
+        .padding(.leading, 12)
     }
 }
+
 
 fileprivate struct CharactersRemainView: View {
     var currentCount: Int
@@ -131,8 +145,8 @@ fileprivate struct CheckOutButton: View {
             .padding(10)
             .frame(height: 28)
             .background(Color.grubRed)
-            .clipShape(Capsule())
-            .accessibilityLabel(Text("Check out of current location."))
+            .cornerRadius(8)
+            .accessibilityLabel(Text("Check out of current location"))
     }
 }
 
@@ -142,30 +156,6 @@ fileprivate struct BioTextEditor: View {
         TextEditor(text: text)
             .frame(height: 100)
             .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary, lineWidth: 1))
-            .accessibilityHint(Text("This text field is for your bio. It has a character limit of 100."))
-    }
-}
-
-fileprivate struct DismissKeyboardButtonLabel: View {
-    var body: some View {
-        Image(systemName: "keyboard.chevron.compact.down")
-            .accessibilityElement(children: .ignore)
-            .accessibility(label: Text("Dismiss Keyboard"))
-    }
-}
-
-fileprivate struct ProfileUserDataView: View {
-    var firstName: Binding<String>
-    var lastName: Binding<String>
-    var companyName: Binding<String>
-    var body: some View {
-        VStack(spacing: 1) {
-            TextField("First Name", text: firstName).profileNameStyle()
-                .font(.title)
-            TextField("Last Name", text: lastName).profileNameStyle()
-                .font(.title)
-            TextField("Company Name", text: companyName)
-        }
-        .padding(.trailing, 16)
+            .accessibilityHint(Text("This TextField is for your bio and has a 100 character maximum."))
     }
 }
