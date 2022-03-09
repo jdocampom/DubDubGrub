@@ -72,6 +72,6 @@ struct AlertContext {
                                                         dismissButton: .default(Text("Dismiss")))
     static let unableToGetCheckedInProfiles = AlertItem(title: Text("Server Error"),
                                                         message: Text("We were unable to get the list of checked-in users for this location. \n\nPlease try again later."),
-                                                        dismissButton: .default(Text("Dismiss")))
+                                                        dismissButton: .default(Text("Dismiss"))) 
     
 }
