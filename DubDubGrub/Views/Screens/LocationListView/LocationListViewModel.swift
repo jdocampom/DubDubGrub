@@ -17,14 +17,14 @@ extension LocationListView {
         
         func getCheckedInProfilesDictionary() {
             CloudKitManager.shared.getCheckedInProfilesDictionary { result in
-                DispatchQueue.main.async { [self] in
+                DispatchQueue.main.async { [weak self] in
                     switch result {
                     case .success(let checkedInProfiles):
-                        self.checkedInProfiles = checkedInProfiles
+                        self?.checkedInProfiles = checkedInProfiles
                         print("✅ SUCCESS FETCHING checkedInProfiles DICTIONARY -- LocationListViewModel ✅")
                     case .failure(_):
                         HapticManager.playErrorHaptic()
-                        alertItem = AlertContext.unableToGetAllCheckedInProfiles
+                        self?.alertItem = AlertContext.unableToGetAllCheckedInProfiles
                         print("❌ ERROR RETRIEVING checkedInProfiles DICTIONARY -- LocationListViewModel ❌")
                     }
                 }

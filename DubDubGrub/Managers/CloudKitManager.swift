@@ -188,7 +188,6 @@ final class CloudKitManager {
         CKContainer.default().publicCloudDatabase.add(operation)
     }
     
-    
     func batchSave(records: [CKRecord], completed: @escaping (Result<[CKRecord], Error>) -> Void) {
         
         let operation = CKModifyRecordsOperation(recordsToSave: records)

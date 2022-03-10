@@ -58,22 +58,22 @@ final class LocationDetailViewModel: ObservableObject {
     
     func getCheckedInStatus() {
         guard let profileRecordID = CloudKitManager.shared.profileRecordID else { return }
-        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
-            DispatchQueue.main.async { [self] in
+        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
                 switch result {
                 case .success(let record):
                     if let reference = record[DDGProfile.kIsCheckedIn] as? CKRecord.Reference {
-                        let currentStatus = reference.recordID == location.id
-                        isCheckedIn = currentStatus
-                        debugPrint(message: "⚠️ isCheckedIn == \(currentStatus) ⚠️")
+                        let currentStatus = reference.recordID == self?.location.id
+                        self?.isCheckedIn = currentStatus
+                        self?.debugPrint(message: "⚠️ isCheckedIn == \(currentStatus) ⚠️")
                     } else {
-                        isCheckedIn = false
-                        debugPrint(message: "⚠️ isCheckedIn == false - REFERENCE  to \(location.name) IS nil ⚠️")
+                        self?.isCheckedIn = false
+                        self?.debugPrint(message: "⚠️ isCheckedIn == false - REFERENCE  to \(String(describing: self?.location.name)) IS nil ⚠️")
                     }
                 case .failure(_):
                     HapticManager.playErrorHaptic()
-                    alertItem = AlertContext.unableToGetCheckInStatus
-                    debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
+                    self?.alertItem = AlertContext.unableToGetCheckInStatus
+                    self?.debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
                 }
             }
         }
@@ -86,64 +86,64 @@ final class LocationDetailViewModel: ObservableObject {
             return
         }
         showLoadingView()
-        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [self] result in
+        CloudKitManager.shared.fetchRecord(with: profileRecordID) { [weak self] result in
             switch result {
             case .success(let record):
                 switch ckeckInStatus {
                 case .checkedIn:
-                    record[DDGProfile.kIsCheckedIn]         = CKRecord.Reference(recordID: location.id, action: .none)
+                    record[DDGProfile.kIsCheckedIn]         = CKRecord.Reference(recordID: (self?.location.id)!, action: .none)
                     record[DDGProfile.kIsCheckedInNilCheck] = 1
-                    debugPrint(message: "✅ CHECKED INTO \(location.name) SUCCESSFULLY ✅")
+                    self?.debugPrint(message: "✅ CHECKED INTO \(String(describing: self?.location.name)) SUCCESSFULLY ✅")
                 case .checkedOut:
                     record[DDGProfile.kIsCheckedIn]         = nil
                     record[DDGProfile.kIsCheckedInNilCheck] = nil
-                    debugPrint(message: "✅ CHECKED OUT OF \(location.name) SUCCESSFULLY ✅")
+                    self?.debugPrint(message: "✅ CHECKED OUT OF \(String(describing: self?.location.name)) SUCCESSFULLY ✅")
                 }
-                CloudKitManager.shared.save(record: record) { [self] result in
-                    DispatchQueue.main.async { [self] in
-                        hideLoadingView()
+                CloudKitManager.shared.save(record: record) { [weak self] result in
+                    DispatchQueue.main.async { [weak self] in
+                        self?.hideLoadingView()
                         switch result {
                         case .success(_):
                             HapticManager.playSuccessHaptic()
                             let profile = DDGProfile(record: record)
                             switch ckeckInStatus {
                             case .checkedIn:
-                                checkedInProfiles.append(profile)
-                                debugPrint(message: "✅ RECORD SAVED SUCCESSFULLY -- CHECK INTO \(location.name) ✅")
+                                self?.checkedInProfiles.append(profile)
+                                self?.debugPrint(message: "✅ RECORD SAVED SUCCESSFULLY -- CHECK INTO \(String(describing: self?.location.name))✅")
                             case .checkedOut:
-                                checkedInProfiles.removeAll { $0.id == profile.id }
-                                debugPrint(message: "✅ RECORD SAVED SUCCESSFULLY -- CHECK OUT OF \(location.name) ✅")
+                                self?.checkedInProfiles.removeAll { $0.id == profile.id }
+                                self?.debugPrint(message: "✅ RECORD SAVED SUCCESSFULLY -- CHECK OUT OF \(String(describing: self?.location.name) )✅")
                             }
-                            isCheckedIn.toggle()
+                            self?.isCheckedIn.toggle()
                         case .failure(_):
                             HapticManager.playErrorHaptic()
-                            alertItem = AlertContext.unableToCheckInOrOut
-                            debugPrint(message: "❌ ERROR SAVING RECORD ❌")
+                            self?.alertItem = AlertContext.unableToCheckInOrOut
+                            self?.debugPrint(message: "❌ ERROR SAVING RECORD ❌")
                         }
                     }
                 }
             case .failure(_):
-                hideLoadingView()
+                self?.hideLoadingView()
                 HapticManager.playErrorHaptic()
-                alertItem = AlertContext.unableToCheckInOrOut
-                debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
+                self?.alertItem = AlertContext.unableToCheckInOrOut
+                self?.debugPrint(message: "❌ ERROR FETCHING RECORD ❌")
             }
         }
     }
     
     func getChechedInProfiles() {
         showLoadingView()
-        CloudKitManager.shared.getCheckedInProfiles(for: location.id) { [self] result in
-            DispatchQueue.main.async { [self] in
+        CloudKitManager.shared.getCheckedInProfiles(for: location.id) { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
                 switch result {
                 case .success(let profiles):
-                    checkedInProfiles = profiles
+                    self?.checkedInProfiles = profiles
                 case .failure(_):
                     HapticManager.playErrorHaptic()
-                    alertItem = AlertContext.unableToGetCheckedInProfiles
-                    debugPrint(message: "❌ ERROR FETCHING CHECKED IN PROFILES ❌")
+                    self?.alertItem = AlertContext.unableToGetCheckedInProfiles
+                    self?.debugPrint(message: "❌ ERROR FETCHING CHECKED IN PROFILES ❌")
                 }
-                hideLoadingView()
+                self?.hideLoadingView()
             }
         }
     }
